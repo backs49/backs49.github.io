@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>권만구 · Side Projects</title>
+<meta name="description" content="투자 판단, 가게 운영, 콘텐츠 큐레이션, 공모주 가계부 — 일상에서 반복되는 일을 발견하면 AI와 함께 서비스로 만듭니다. 17년차 엔지니어의 사이드 프로젝트 기록.">
+<meta property="og:title" content="권만구 · Side Projects">
+<meta property="og:description" content="생활의 문제를 직접 만들어 해결합니다. 17년차 엔지니어의 사이드 프로젝트 기록.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23101010'/%3E%3Crect x='3' y='4' width='4' height='8' fill='%23ff4d00'/%3E%3Crect x='9' y='4' width='4' height='8' fill='%23ececec'/%3E%3C/svg%3E">
+<script>
+  // 첫 페인트 전에 저장된 테마 적용 (플래시 방지)
+  (function () {
+    try {
+      var t = localStorage.getItem('theme');
+      if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+    } catch (e) { /* localStorage 차단 시 기본 dark */ }
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root,
+html[data-theme="dark"] {
+  --bg: #101010;
+  --panel: #181818;
+  --line: #262626;
+  --ink: #ececec;
+  --dim: #8b8b83;
+  --acc: #ff4d00;
+}
+html[data-theme="light"] {
+  --bg: #f7f5f0;
+  --panel: #ffffff;
+  --line: #dcd8cf;
+  --ink: #161616;
+  --dim: #6f6b62;
+  --acc: #e04400;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: 'Noto Sans KR', sans-serif;
+  transition: background-color .3s, color .3s;
+  min-height: 100vh;
+}
+a { color: inherit; }
+a:hover { opacity: .8; }
+strong { color: var(--ink); }
+.mono { font-family: 'JetBrains Mono', monospace; }
+
+@keyframes rise   { from { opacity: 0; transform: translateY(44px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes riseIn { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes blink  { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* 스크롤 진입 애니메이션 — animation-timeline 미지원 브라우저에서는 즉시 완료 상태로 표시됨 */
+.view-rise      { animation: riseIn linear both; animation-timeline: view(); animation-range: entry 0% entry 38%; }
+.view-rise-30   { animation: riseIn linear both; animation-timeline: view(); animation-range: entry 0% entry 30%; }
+.view-rise-34   { animation: riseIn linear both; animation-timeline: view(); animation-range: entry 0% entry 34%; }
+.view-rise-45   { animation: riseIn linear both; animation-timeline: view(); animation-range: entry 0% entry 45%; }
+
+/* ── nav ─────────────────────────────────────────── */
+.nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 6vw;
+  border-bottom: 1px solid var(--line);
+  position: sticky; top: 0; z-index: 10;
+  background-color: var(--bg);
+  transition: background-color .3s;
+}
+.nav-brand { font-weight: 900; font-size: 16px; text-decoration: none; }
+.nav-brand span { color: var(--dim); font-weight: 400; }
+.nav-links { display: flex; gap: 24px; font-size: 13px; color: var(--dim); align-items: center; }
+.nav-links a { text-decoration: none; }
+.nav-links a:hover { color: var(--acc); }
+.theme-toggle {
+  cursor: pointer;
+  border: 1px solid var(--line); border-radius: 999px;
+  padding: 5px 14px;
+  font-family: inherit; font-size: 11px; font-weight: 700;
+  color: var(--acc); background: none;
+}
+.theme-toggle:hover { border-color: var(--acc); }
+
+/* ── hero ────────────────────────────────────────── */
+.hero { padding: 110px 6vw 84px; border-bottom: 1px solid var(--line); }
+.hero-head { animation: rise .8s cubic-bezier(.2,.7,.2,1) both; }
+.hero-kicker { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--acc); margin-bottom: 24px; }
+.hero-cursor {
+  display: inline-block; width: 8px; height: 15px;
+  background: var(--acc); vertical-align: -2px; margin-left: 6px;
+  animation: blink 1s step-end infinite;
+}
+.hero-title {
+  margin: 0;
+  font-size: clamp(44px, 6.4vw, 76px); font-weight: 900;
+  line-height: 1.2; letter-spacing: -.02em; max-width: 900px;
+}
+.hero-sub { margin-top: 28px; font-size: 17px; line-height: 1.9; color: var(--dim); max-width: 600px; }
+.hero-meta {
+  display: flex; flex-wrap: wrap; gap: 44px;
+  margin: 60px 0 0; font-size: 14px;
+  animation: rise .8s .25s cubic-bezier(.2,.7,.2,1) both;
+}
+.hero-meta dt { font-size: 11px; color: var(--dim); letter-spacing: .1em; margin-bottom: 6px; }
+.hero-meta dd { margin: 0; font-weight: 700; }
+.accent { color: var(--acc); }
+
+/* ── marquee ─────────────────────────────────────── */
+.marquee {
+  border-bottom: 1px solid var(--line);
+  overflow: hidden;
+  background: var(--acc); color: #fff;
+}
+.marquee-track {
+  display: flex; white-space: nowrap;
+  animation: marquee 22s linear infinite;
+  font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 15px;
+  padding: 10px 0;
+}
+.marquee-track span { padding: 0 20px; }
+
+/* ── sections ────────────────────────────────────── */
+.section { padding: 96px 6vw; border-bottom: 1px solid var(--line); }
+.section-row {
+  display: flex; align-items: baseline; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px; margin-bottom: 30px;
+}
+.section-no { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--acc); }
+.section-tag { font-size: 12px; letter-spacing: .12em; color: var(--dim); }
+.section-stack { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--dim); }
+.section-label { display: flex; align-items: baseline; gap: 14px; }
+.section-desc { font-size: 15.5px; color: var(--dim); }
+.tags { display: flex; gap: 8px; flex-wrap: wrap; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; }
+.tags span { border: 1px solid var(--line); border-radius: 4px; padding: 6px 12px; color: var(--dim); }
+.repo-link {
+  display: inline-block; margin-top: 4px;
+  font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+  color: var(--acc); text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+.repo-link:hover { border-bottom-color: var(--acc); opacity: 1; }
+
+/* 01 ai-trader */
+.trader-title { margin: 0; font-size: clamp(32px, 3.8vw, 46px); font-weight: 900; line-height: 1.3; max-width: 820px; }
+.trader-body { display: grid; grid-template-columns: 1.2fr 1fr; gap: 48px; margin-top: 36px; align-items: start; }
+.trader-copy { display: grid; gap: 24px; }
+.trader-copy .section-desc { line-height: 1.95; }
+.stats {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1px; background: var(--line); border: 1px solid var(--line);
+}
+.stats > div { background-color: var(--bg); padding: 26px; transition: background-color .3s; }
+.stat-num { font-size: 36px; font-weight: 900; color: var(--acc); }
+.stat-label { font-size: 12px; color: var(--dim); margin-top: 4px; }
+
+/* 02 gongmoX */
+.gongmox-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+.gongmox-title { margin: 0; font-size: clamp(28px, 3.2vw, 40px); font-weight: 900; line-height: 1.35; }
+.gongmox-copy { display: grid; gap: 18px; }
+.gongmox-copy .section-desc { line-height: 1.9; }
+
+/* 03 more */
+.more-title { margin: 0 0 40px; font-size: clamp(28px, 3.2vw, 40px); font-weight: 900; line-height: 1.35; }
+.more-head .section-row { margin-bottom: 16px; }
+.cards { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.card {
+  border: 1px solid var(--line); padding: 30px;
+  display: grid; gap: 10px; align-content: start;
+  text-decoration: none;
+  transition: border-color .2s, transform .2s;
+}
+.card:hover { border-color: var(--acc); transform: translateY(-4px); opacity: 1; }
+.card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.card-name { font-size: 18px; font-weight: 900; }
+.card-stack { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--dim); text-align: right; }
+.card-desc { font-size: 13.5px; line-height: 1.8; color: var(--dim); }
+
+/* ── about + footer ──────────────────────────────── */
+.about { padding: 100px 6vw 36px; }
+.about-title { margin: 0; font-size: clamp(26px, 2.8vw, 34px); font-weight: 900; line-height: 1.5; max-width: 700px; }
+.about-sub { margin-top: 18px; font-size: 14.5px; line-height: 1.9; color: var(--dim); max-width: 580px; }
+.about-cta { display: flex; gap: 12px; margin-top: 30px; font-size: 13px; font-weight: 700; flex-wrap: wrap; }
+.btn-fill {
+  background: var(--acc); color: #fff;
+  padding: 13px 26px; text-decoration: none;
+  transition: transform .2s;
+}
+.btn-fill:hover { transform: translateY(-2px); }
+.btn-line {
+  border: 1px solid var(--line); color: var(--ink);
+  padding: 13px 26px; text-decoration: none;
+}
+.btn-line:hover { border-color: var(--acc); }
+.footer {
+  margin-top: 64px; padding-top: 22px;
+  border-top: 1px solid var(--line);
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  font-size: 12px; color: var(--dim);
+}
+
+/* ── responsive ──────────────────────────────────── */
+@media (max-width: 900px) {
+  .trader-body, .gongmox-grid, .cards { grid-template-columns: 1fr; }
+  .hero { padding: 80px 6vw 64px; }
+  .section { padding: 72px 6vw; }
+  .about { padding: 76px 6vw 32px; }
+  .hero-meta { gap: 28px; }
+}
+@media (max-width: 760px) {
+  .nav { flex-wrap: wrap; row-gap: 12px; }
+  .nav-links { order: 3; width: 100%; gap: 16px; overflow-x: auto; }
+  /* 두 줄로 감싸진 sticky nav 높이(스크롤바 포함 최대 ~117px)만큼 앵커 착지 위치 보정 */
+  .section, .about { scroll-margin-top: 120px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .hero-head, .hero-meta, .hero-cursor, .marquee-track,
+  .view-rise, .view-rise-30, .view-rise-34, .view-rise-45 { animation: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- nav -->
+<nav class="nav">
+  <a href="#top" class="nav-brand">권만구 <span>/ Side Projects</span></a>
+  <div class="nav-links">
+    <a href="#ai-trader">ai-trader</a>
+    <a href="#dessert">nuknuk</a>
+    <a href="#grok-x">grok-x</a>
+    <a href="#gongmox">gongmoX</a>
+    <a href="#more">more</a>
+    <a href="#about">about</a>
+    <a href="https://github.com/backs49" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+  </div>
+  <button type="button" class="theme-toggle" id="theme-toggle">LIGHT ○</button>
+</nav>
+
+<!-- hero -->
+<header id="top" class="hero">
+  <div class="hero-head">
+    <div class="hero-kicker">github.com/backs49 · 퇴근 후에 만든 것들<span class="hero-cursor"></span></div>
+    <h1 class="hero-title">생활의 문제를<br><span class="accent">직접 만들어</span> 해결합니다.</h1>
+    <p class="hero-sub">투자 판단, 가게 운영, 콘텐츠 큐레이션, 공모주 가계부 — 일상에서 반복되는 일을 발견하면 AI와 함께 서비스로 만듭니다. 17년차 엔지니어의 사이드 프로젝트 기록.</p>
+  </div>
+  <dl class="hero-meta">
+    <div><dt>AUTHOR</dt><dd>권만구 · Mangu Kwon</dd></div>
+    <div><dt>REPOS</dt><dd>9 projects · 계속 증식 중</dd></div>
+    <div><dt>STACK</dt><dd>Python · TypeScript · Next.js · Node</dd></div>
+    <div><dt>WITH</dt><dd>Claude · Grok · AI 페어코딩</dd></div>
+  </dl>
+</header>
+
+<!-- marquee -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span>AI AGENTS ✦ LANGGRAPH ✦ PWA ✦ WEB PUSH ✦ CRAWLER ✦ NEXT.JS ✦ SUPABASE ✦ TELEGRAM BOT ✦ CLAUDE VISION ✦ E2E TEST ✦</span>
+    <span>AI AGENTS ✦ LANGGRAPH ✦ PWA ✦ WEB PUSH ✦ CRAWLER ✦ NEXT.JS ✦ SUPABASE ✦ TELEGRAM BOT ✦ CLAUDE VISION ✦ E2E TEST ✦</span>
+  </div>
+</div>
+
+<!-- 01 ai-trader -->
+<section id="ai-trader" class="section">
+  <div class="view-rise">
+    <div class="section-row">
+      <div class="section-label">
+        <span class="section-no">01</span>
+        <span class="section-tag">FLAGSHIP · AI 에이전트 시스템</span>
+      </div>
+      <span class="section-stack">Python · LangGraph · Streamlit</span>
+    </div>
+    <h2 class="trader-title">거장 4명이 토론하고,<br>결정은 내가 한다 — <span class="accent">ai-trader</span></h2>
+  </div>
+  <div class="trader-body view-rise-30">
+    <div class="trader-copy">
+      <div class="section-desc">벤 그레이엄·버핏·린치·캐시 우드 — 거장 투자자 페르소나 AI가 한국·미국 주식을 합의 분석하고, Telegram으로 제안을 보내면 사람이 승인해야만 주문이 나가는 <strong>반자동 투자 시스템</strong>. 기술적 신호(무료) → LLM(유료) 2단계 게이팅으로 토큰을 아끼고, KillSwitch가 손실·장애 시 전 포지션을 즉시 청산한다.</div>
+      <div class="tags">
+        <span>LangGraph</span>
+        <span>claude-agent-sdk</span>
+        <span>증권사 OpenAPI × 2</span>
+        <span>Telegram Bot</span>
+        <span>SQLite · APScheduler</span>
+      </div>
+    </div>
+    <div class="stats">
+      <div><div class="stat-num">633</div><div class="stat-label">pytest 통과</div></div>
+      <div><div class="stat-num">4명</div><div class="stat-label">거장 페르소나 합의</div></div>
+      <div><div class="stat-num">9면</div><div class="stat-label">대시보드 페이지</div></div>
+      <div><div class="stat-num">01:00</div><div class="stat-label">매일 새벽 종목 발굴</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 nuknuk-dessert -->
+<section id="dessert" class="section">
+  <div class="view-rise">
+    <div class="section-row">
+      <div class="section-label">
+        <span class="section-no">02</span>
+        <span class="section-tag">FULL-STACK COMMERCE · 실사용 서비스</span>
+      </div>
+      <span class="section-stack">Next.js · Supabase · Toss</span>
+    </div>
+    <div class="gongmox-grid">
+      <h2 class="trader-title">주문받고 결제받고,<br>알림까지 — <span class="accent">nuknuk-dessert</span></h2>
+      <div class="gongmox-copy">
+        <div class="section-desc">동네 디저트 가게를 위한 주문·결제 시스템. 토스 결제위젯으로 결제를 받고, 쿠폰·포인트로 단골을 관리하고, 카카오 알림톡으로 주문 상태를 알린다. 메뉴·주문·고객·매출을 한눈에 보는 <strong>관리자 패널</strong>까지 갖춘 풀커머스 서비스.</div>
+        <div class="tags">
+          <span>토스 결제위젯</span>
+          <span>쿠폰·포인트</span>
+          <span>카카오 알림톡</span>
+          <span>관리자 패널</span>
+        </div>
+        <a class="repo-link" href="https://github.com/backs49/nuknuk-dessert" target="_blank" rel="noopener noreferrer">github.com/backs49/nuknuk-dessert ↗</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 grok-x-curator -->
+<section id="grok-x" class="section">
+  <div class="view-rise">
+    <div class="section-row">
+      <div class="section-label">
+        <span class="section-no">03</span>
+        <span class="section-tag">AI 콘텐츠 큐레이터 · 커뮤니티 실사용</span>
+      </div>
+      <span class="section-stack">Python · Grok API · Streamlit</span>
+    </div>
+    <h2 class="trader-title">X 추천 알고리즘을 읽어,<br>내 글을 채점한다 — <span class="accent">grok-x-curator</span></h2>
+  </div>
+  <div class="trader-body view-rise-30">
+    <div class="trader-copy">
+      <div class="section-desc">X(트위터)의 공개 추천 알고리즘을 시스템 프롬프트로 인코딩해, 포스트를 알고리즘 기준으로 채점하고 개선안을 제시하는 Streamlit 앱. 8개 탭 · 3개 언어를 지원하고 pytest 76개로 검증했으며, <strong>실제 커뮤니티 사용자들과 함께 사용 중</strong>이다.</div>
+      <div class="tags">
+        <span>Grok API</span>
+        <span>시스템 프롬프트 인코딩</span>
+        <span>Streamlit</span>
+        <span>다국어 지원</span>
+      </div>
+      <a class="repo-link" href="https://github.com/backs49/dongpirang-grok-x-curator" target="_blank" rel="noopener noreferrer">github.com/backs49/dongpirang-grok-x-curator ↗</a>
+    </div>
+    <div class="stats">
+      <div><div class="stat-num">8개</div><div class="stat-label">추천 탭</div></div>
+      <div><div class="stat-num">3개</div><div class="stat-label">지원 언어</div></div>
+      <div><div class="stat-num">76</div><div class="stat-label">pytest 통과</div></div>
+      <div><div class="stat-num">Live</div><div class="stat-label">커뮤니티 실사용</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 gongmoX -->
+<section id="gongmox" class="section">
+  <div class="view-rise">
+    <div class="section-row">
+      <div class="section-label">
+        <span class="section-no">04</span>
+        <span class="section-tag">FULL-STACK PWA · 실사용 서비스</span>
+      </div>
+      <span class="section-stack">TypeScript · Hono · React PWA</span>
+    </div>
+    <div class="gongmox-grid">
+      <h2 class="gongmox-title">부부가 함께 쓰는<br>공모주 장부 — <span class="accent">gongmoX</span></h2>
+      <div class="gongmox-copy">
+        <div class="section-desc">공모주 일정을 매일 자동 수집해 청약·상장 타이밍을 푸시로 알려주고, 수익 스크린샷을 <strong>AI vision으로 파싱해 기록</strong>하는 가계부 PWA. 크롤러부터 Web Push, 인증, AI까지 혼자 풀스택으로.</div>
+        <div class="tags">
+          <span>Web Push</span>
+          <span>크롤러(EUC-KR)</span>
+          <span>Claude Vision</span>
+          <span>모노레포 · zod 계약</span>
+        </div>
+        <a class="repo-link" href="https://github.com/backs49/gongmox-showcase" target="_blank" rel="noopener noreferrer">github.com/backs49/gongmox-showcase ↗</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 more -->
+<section id="more" class="section">
+  <div class="more-head view-rise">
+    <div class="section-row">
+      <div class="section-label">
+        <span class="section-no">05</span>
+        <span class="section-tag">MORE EXPERIMENTS</span>
+      </div>
+    </div>
+    <h2 class="more-title">만들면서 배운다.</h2>
+  </div>
+  <div class="cards">
+    <a class="card view-rise-34" href="https://github.com/backs49/ai-ropan-factory" target="_blank" rel="noopener noreferrer">
+      <div class="card-head">
+        <div class="card-name">ai-ropan-factory</div>
+        <div class="card-stack">Next.js 16 · Supabase · AI×3</div>
+      </div>
+      <div class="card-desc">장르·키워드만 넣으면 AI가 로판 웹소설을 기획부터 연재까지 생성하는 SaaS. Claude·Gemini·Grok 스트리밍 통합, 토스 정기결제 구독, 원자적 쿼터 설계.</div>
+    </a>
+    <a class="card view-rise-34" href="https://github.com/backs49/emotion-diary" target="_blank" rel="noopener noreferrer">
+      <div class="card-head">
+        <div class="card-name">emotion-diary</div>
+        <div class="card-stack">Next.js · Supabase</div>
+      </div>
+      <div class="card-desc">아이가 쓰고 부모가 조용히 읽는 가족 감정 일기 PWA. 음성 입력(STT)·사진 기록에, 권한 분리를 Postgres RLS로 강제하고 Vitest·Playwright·RLS SQL 3층 테스트로 검증.</div>
+    </a>
+    <a class="card view-rise-34" href="https://github.com/backs49/dongpirang-meme-factory" target="_blank" rel="noopener noreferrer">
+      <div class="card-head">
+        <div class="card-name">dongpirang-meme-factory</div>
+        <div class="card-stack">Python · Streamlit</div>
+      </div>
+      <div class="card-desc">키워드 하나로 밈 이미지·웹툰 스크립트·SNS 캡션을 한 번에 생성. API 키 없이도 Mock 모드로 완전 동작하는 Strategy 패턴 설계.</div>
+    </a>
+  </div>
+</section>
+
+<!-- about + footer -->
+<section id="about" class="about">
+  <div class="view-rise-45">
+    <h2 class="about-title">낮에는 17년차 엔지니어,<br>밤에는 1인 메이커.</h2>
+    <p class="about-sub">대규모 시스템을 오래 다뤄온 경험 위에, AI 페어코딩으로 혼자서도 기획→개발→배포→운영까지. 아이디어가 생기면 그 주에 첫 버전이 나옵니다.</p>
+    <div class="about-cta">
+      <a class="btn-fill" href="https://github.com/backs49" target="_blank" rel="noopener noreferrer">github.com/backs49 ↗</a>
+      <a class="btn-line" href="mailto:backs49@gmail.com">backs49@gmail.com</a>
+    </div>
+  </div>
+  <footer class="footer">
+    <span>© 2026 Mangu Kwon</span><span>만들면서 배우고, 배우면서 만듭니다.</span>
+  </footer>
+</section>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+
+  function render() {
+    var dark = root.dataset.theme !== 'light';
+    btn.textContent = dark ? 'LIGHT ○' : 'DARK ●';
+    btn.setAttribute('aria-pressed', String(!dark));
+  }
+
+  btn.addEventListener('click', function () {
+    var next = root.dataset.theme === 'light' ? 'dark' : 'light';
+    root.dataset.theme = next;
+    try { localStorage.setItem('theme', next); } catch (e) { /* 저장 실패해도 동작 */ }
+    render();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
